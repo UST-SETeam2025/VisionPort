@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/visionport/static/css/main.1dc16753.css",
+    "main.js": "/visionport/static/js/main.9cfcef9b.js",
+    "index.html": "/visionport/index.html",
+    "main.1dc16753.css.map": "/visionport/static/css/main.1dc16753.css.map",
+    "main.9cfcef9b.js.map": "/visionport/static/js/main.9cfcef9b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1dc16753.css",
+    "static/js/main.9cfcef9b.js"
+  ]
+}
