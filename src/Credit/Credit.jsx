@@ -1499,7 +1499,7 @@ const CreditsPage = () => {
 
             <div className="flex space-x-6">
               <a
-                href="#"
+                href="https://www.facebook.com"
                 className="text-gray-400 hover:text-yellow-500 transition"
               >
                 <svg
@@ -1511,7 +1511,7 @@ const CreditsPage = () => {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.twitter.com"
                 className="text-gray-400 hover:text-yellow-500 transition"
               >
                 <svg
@@ -1523,7 +1523,7 @@ const CreditsPage = () => {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com"
                 className="text-gray-400 hover:text-yellow-500 transition"
               >
                 <svg

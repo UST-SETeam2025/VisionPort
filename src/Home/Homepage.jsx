@@ -224,48 +224,9 @@ const Newpage = () => {
 
   // 使用 IntersectionObserver 檢測當前活動區塊
   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.2,
-    };
-
-    const handleIntersect = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id.replace("section", "");
-
-          switch (sectionId) {
-            case "1":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, intro: true }));
-              }, 500);
-              break;
-            case "2":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, tutorial: true }));
-              }, 500);
-              break;
-            case "3":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, mission: true }));
-              }, 500);
-              break;
-            case "4":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, free: true }));
-              }, 500);
-              break;
-            default:
-              break;
-          }
-
-          observer.unobserve(entry.target);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(handleIntersect, options);
+    const observer = new IntersectionObserver(handleIntersect, {
+      threshold: 0.1,
+    });
 
     Object.values(sectionRefs).forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
@@ -276,7 +237,7 @@ const Newpage = () => {
         if (ref.current) observer.unobserve(ref.current);
       });
     };
-  }, []);
+  }, [sectionRefs, handleIntersect]);
 
   // 計算漸變色罩的位置
   const calculateOverlayPosition = () => {
@@ -308,8 +269,6 @@ const Newpage = () => {
     "/history/h2.png",
     "/history/h3.png",
     "/history/h4.png",
-    "/history/h5.png",
-    "/history/h6.png",
   ];
 
   // 導航欄高度（用於調整遮罩位置）
@@ -1751,7 +1710,7 @@ const Newpage = () => {
 
               <div className="flex space-x-6">
                 <a
-                  href="#"
+                  href="https://www.facebook.com"
                   className="text-gray-400 hover:text-yellow-500 transition"
                 >
                   <svg
@@ -1763,7 +1722,7 @@ const Newpage = () => {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://www.twitter.com"
                   className="text-gray-400 hover:text-yellow-500 transition"
                 >
                   <svg
@@ -1775,7 +1734,7 @@ const Newpage = () => {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com"
                   className="text-gray-400 hover:text-yellow-500 transition"
                 >
                   <svg
