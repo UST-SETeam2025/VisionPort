@@ -261,7 +261,7 @@ const Newpage = () => {
         if (ref.current) observer.unobserve(ref.current);
       });
     };
-  }, [sectionRefs, handleIntersect]);
+  }, [sectionRefs]); // Removed handleIntersect from dependencies
 
   // 計算漸變色罩的位置
   const calculateOverlayPosition = () => {
