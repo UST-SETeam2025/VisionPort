@@ -72,7 +72,7 @@ const Newpage = () => {
         "The 1990s were the golden era for Hong Kong's port, with container throughput ranking first in the world for many consecutive years. Port facilities continued to expand, and the Kwai Tsing Container Terminal became the busiest container port in the world at that time. During this period, Hong Kong also became the main gateway connecting mainland China with the world.",
     },
     2010: {
-      image: "/history/h12.jpg",
+      image: `${process.env.PUBLIC_URL}/history/h12.jpg`,
       location: "Modern Container Terminal",
       progress: 95,
       throughput: "240 million tons",
@@ -102,7 +102,7 @@ const Newpage = () => {
     {
       id: 1,
       name: "Project Manager",
-      photo: "/team/Edmond.jpg",
+      photo: `${process.env.PUBLIC_URL}/team/Edmond.jpg`,
       role: "LEUNG Kar Cheong",
       email: "pm@stu.vtc.edu.hk",
       stats: {
@@ -123,7 +123,7 @@ const Newpage = () => {
     {
       id: 2,
       name: "3D Modeler",
-      photo: "/team/Bella.jpg",
+      photo: `${process.env.PUBLIC_URL}/team/Bella.jpg`,
       role: "POON Ka Yi",
       email: "3d@stu.vtc.edu.hk",
       stats: {
@@ -144,7 +144,7 @@ const Newpage = () => {
     {
       id: 3,
       name: "Unity Developer",
-      photo: "/team/Samuel.jpg",
+      photo: `${process.env.PUBLIC_URL}/team/Samuel.jpg`,
       role: "LI Chun Tat",
       email: "dev@stu.vtc.edu.hk",
       stats: {
@@ -165,7 +165,7 @@ const Newpage = () => {
     {
       id: 4,
       name: "VR Specialist",
-      photo: "/team/Raymond.jpg",
+      photo: `${process.env.PUBLIC_URL}/team/Raymond.jpg`,
       role: "WONG Hoi Ming",
       email: "vr@stu.vtc.edu.hk",
       stats: {
@@ -470,12 +470,11 @@ const Newpage = () => {
         >
           {/* Background Video */}
           <video
-            className="absolute inset-0 w-full h-full object-cover"
-            src="/Terminal.mp4"
+            className="w-full h-full object-cover rounded-lg shadow-lg"
+            src={`${process.env.PUBLIC_URL}/Terminal.mp4`}
             autoPlay
             loop
             muted
-            playsInline
           ></video>
 
           {/* Overlay */}
