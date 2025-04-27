@@ -224,6 +224,30 @@ const Newpage = () => {
 
   // 使用 IntersectionObserver 檢測當前活動區塊
   useEffect(() => {
+    const handleIntersect = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          switch (sectionId) {
+            case "section1":
+              setActiveSections((prev) => ({ ...prev, intro: true }));
+              break;
+            case "section2":
+              setActiveSections((prev) => ({ ...prev, tutorial: true }));
+              break;
+            case "section3":
+              setActiveSections((prev) => ({ ...prev, mission: true }));
+              break;
+            case "section4":
+              setActiveSections((prev) => ({ ...prev, free: true }));
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    };
+
     const observer = new IntersectionObserver(handleIntersect, {
       threshold: 0.1,
     });
