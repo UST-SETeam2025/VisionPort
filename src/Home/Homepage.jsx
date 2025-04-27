@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -83,13 +83,19 @@ const Newpage = () => {
     },
   };
 
+  // Create individual refs
+  const introRef = useRef(null);
+  const tutorialRef = useRef(null);
+  const missionRef = useRef(null);
+  const freeRef = useRef(null);
+
   // 創建 refs 對象
-  const sectionRefs = {
-    intro: useRef(null),
-    tutorial: useRef(null),
-    mission: useRef(null),
-    free: useRef(null),
-  };
+  const sectionRefs = useMemo(() => ({
+    intro: introRef,
+    tutorial: tutorialRef,
+    mission: missionRef,
+    free: freeRef,
+  }), []);
 
   // 團隊成員數據
   const teamMembers = [
@@ -191,6 +197,9 @@ const Newpage = () => {
     `${process.env.PUBLIC_URL}/carousel/h8.png`,
   ];
 
+  // 導航欄高度（用於調整遮罩位置）
+  const navbarHeight = 54; // 根據你的導航欄高度調整，通常是16的倍數
+
   // 模擬加載器效果
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -286,32 +295,6 @@ const Newpage = () => {
   };
 
   const overlayPosition = calculateOverlayPosition();
-
-  // 顯示系統消息的函數
-  const showSystemMessage = (message) => {
-    setSystemMessage({
-      show: true,
-      message,
-    });
-
-    setTimeout(() => {
-      setSystemMessage({
-        show: false,
-        message: "",
-      });
-    }, 3000);
-  };
-
-  // 歷史圖片數組 - 保留但註釋掉未使用的變量
-  // const historyImages = [
-  //   "/history/h1.png",
-  //   "/history/h2.png",
-  //   "/history/h3.png",
-  //   "/history/h4.png",
-  // ];
-
-  // 導航欄高度（用於調整遮罩位置）
-  const navbarHeight = 54; // 根據你的導航欄高度調整，通常是16的倍數
 
   return (
     <div className="text-white font-sans overflow-x-hidden">
@@ -590,7 +573,7 @@ const Newpage = () => {
         <section
           id="section1"
           className="min-h-screen relative z-40 flex items-center justify-center"
-          ref={sectionRefs.intro}
+          ref={introRef}
         >
           <div className="w-full flex items-center justify-center px-4">
             <div className="max-w-5xl w-full">
@@ -710,7 +693,7 @@ const Newpage = () => {
         <section
           id="section2"
           className="min-h-screen relative z-40 flex items-center justify-center"
-          ref={sectionRefs.tutorial}
+          ref={tutorialRef}
         >
           <div className="w-full flex items-center justify-center px-4">
             <div className="max-w-5xl w-full">
@@ -834,7 +817,7 @@ const Newpage = () => {
         <section
           id="section3"
           className="min-h-screen relative z-40 flex items-center justify-center"
-          ref={sectionRefs.mission}
+          ref={missionRef}
         >
           <div className="w-full flex items-center justify-center px-4">
             <div className="max-w-5xl w-full">
@@ -955,7 +938,7 @@ const Newpage = () => {
         <section
           id="section4"
           className="min-h-screen relative z-40 flex items-center justify-center"
-          ref={sectionRefs.free}
+          ref={freeRef}
         >
           <div className="w-full flex items-center justify-center px-4">
             <div className="max-w-5xl w-full">
