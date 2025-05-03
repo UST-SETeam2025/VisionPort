@@ -12,10 +12,6 @@ const Newpage = () => {
   });
   const [windowHeight, setWindowHeight] = useState(0);
   const [loaderVisible, setLoaderVisible] = useState(true);
-  const [systemMessage, setSystemMessage] = useState({
-    show: false,
-    message: "",
-  });
 
   // 團隊選擇器的狀態
   const [selectedCharacter, setSelectedCharacter] = useState(0);
@@ -343,16 +339,6 @@ const Newpage = () => {
         </div>
       )}
 
-      {/* System Message */}
-      {systemMessage.show && (
-        <div className="fixed inset-0 z-[9998] bg-black bg-opacity-70 flex items-center justify-center">
-          <div className="bg-gray-800 rounded-xl p-5 max-w-md text-center">
-            <p>{systemMessage.message}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Fixed Navigation - 將導航欄的z-index提高到超過所有遮罩 */}
       {/* Fixed Navigation - 將導航欄的z-index提高到超過所有遮罩 */}
       <nav className="fixed top-0 z-[10000] w-full bg-black bg-opacity-80 shadow-md backdrop-blur-sm border-b border-yellow-900/30">
         <div className="max-w-5xl mx-auto flex justify-center space-x-8 py-4">
@@ -388,12 +374,17 @@ const Newpage = () => {
           >
             About Us
           </Link>
-
           <RouterLink
             to="/credit"
             className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
           >
             Credits
+          </RouterLink>
+          <RouterLink
+            to="/privacy"
+            className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
+          >
+            Privacy
           </RouterLink>
         </div>
       </nav>
@@ -512,7 +503,7 @@ const Newpage = () => {
       </div>
 
       {/* Add custom text shadow classes */}
-      <style jsx>{`
+      <style>{`
         .text-shadow-md {
           text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
         }
@@ -1773,7 +1764,7 @@ const Newpage = () => {
       </div>
 
       {/* Add CSS Animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes marqee-animation {
           0% {
             transform: translateY(0);
