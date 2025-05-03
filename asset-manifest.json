@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/VisionPort/static/css/main.1dc16753.css",
-    "main.js": "/VisionPort/static/js/main.33567bb4.js",
+    "main.css": "/VisionPort/static/css/main.31e9b8e6.css",
+    "main.js": "/VisionPort/static/js/main.b3fc319a.js",
     "index.html": "/VisionPort/index.html",
-    "main.1dc16753.css.map": "/VisionPort/static/css/main.1dc16753.css.map",
-    "main.33567bb4.js.map": "/VisionPort/static/js/main.33567bb4.js.map"
+    "main.31e9b8e6.css.map": "/VisionPort/static/css/main.31e9b8e6.css.map",
+    "main.b3fc319a.js.map": "/VisionPort/static/js/main.b3fc319a.js.map"
   },
   "entrypoints": [
-    "static/css/main.1dc16753.css",
-    "static/js/main.33567bb4.js"
+    "static/css/main.31e9b8e6.css",
+    "static/js/main.b3fc319a.js"
   ]
 }
