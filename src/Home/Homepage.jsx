@@ -663,14 +663,19 @@ const Newpage = () => {
                   {/* Content Area */}
                   <div className="h-full w-full flex items-center justify-center">
                     <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
-                      <iframe
-                        className="w-full h-full object-cover rounded-lg shadow-lg ml-11"
-                        src="https://www.youtube.com/embed/6lTKJSAmFM8"
-                        title="Game Introduction Video"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+                      <div className="w-full h-full object-cover rounded-lg shadow-lg ml-11 bg-slate-900/80 p-8">
+                        <h3 className="text-2xl font-bold text-yellow-400 mb-4">Welcome to VisionPort</h3>
+                        <p className="text-gray-300 text-lg leading-relaxed">
+                          Experience the future of port operations training with our state-of-the-art VR simulator. 
+                          Our platform combines cutting-edge technology with realistic port environments to provide 
+                          an immersive learning experience for crane operators.
+                        </p>
+                        <p className="text-gray-300 text-lg leading-relaxed mt-4">
+                          Whether you're a beginner looking to learn the basics or an experienced operator 
+                          seeking to enhance your skills, VisionPort offers a comprehensive training solution 
+                          that adapts to your needs.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1033,7 +1038,7 @@ const Newpage = () => {
                     <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
                       <iframe
                         className="w-full h-full object-cover rounded-lg shadow-lg -ml-9"
-                        src="https://www.youtube.com/embed/FQsanPZleQU"
+                        src="https://www.youtube.com/embed/6lTKJSAmFM8"
                         title="Free Mode Video"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1600,6 +1605,18 @@ const Newpage = () => {
                         </span>
                       </div>
 
+                      {/* Contact Button */}
+                      <a 
+                        href={`mailto:${teamMembers[selectedCharacter].email}`}
+                        className="contact-button relative block"
+                      >
+                        <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all duration-300 hover:bg-gradient-to-r hover:from-yellow-800/80 hover:to-yellow-600/80 transform hover:scale-105">
+                          <span className="text-lg font-bold tracking-wider">
+                            CONTACT
+                          </span>
+                        </div>
+                      </a>
+
                       {/* Bottom Identifier */}
                       <div className="flex justify-between mt-3 text-xs text-yellow-600/70 font-mono">
                         <div>2023-2025</div>
@@ -1616,7 +1633,12 @@ const Newpage = () => {
               <div className="flex flex-wrap justify-between items-center">
                 <div className="email-section flex items-center text-yellow-500 mb-2 md:mb-0">
                   <span className="mr-2 font-mono text-sm">TEAM EMAIL:</span>
-                  <span className="font-mono text-sm">visionproty@gmail.com</span>
+                  <a 
+                    href={`mailto:${teamMembers[selectedCharacter].email}`}
+                    className="font-mono text-sm hover:text-yellow-400 transition-colors"
+                  >
+                    {teamMembers[selectedCharacter].email}
+                  </a>
                 </div>
 
                 {/* Team Overall Statistics */}
@@ -1674,7 +1696,10 @@ const Newpage = () => {
                   </div>
 
                   {/* Contact Button */}
-                  <a href="#contact" className="contact-button relative block">
+                  <a 
+                    href={`mailto:${teamMembers[selectedCharacter].email}`}
+                    className="contact-button relative block"
+                  >
                     <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all duration-300 hover:bg-gradient-to-r hover:from-yellow-800/80 hover:to-yellow-600/80 transform hover:scale-105">
                       <span className="text-lg font-bold tracking-wider">
                         CONTACT

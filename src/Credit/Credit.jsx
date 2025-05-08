@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { Link } from "react-scroll";
 
 const CreditsPage = () => {
   // 創建一個音頻管理系統
@@ -223,7 +224,10 @@ const CreditsPage = () => {
 
     if (!audio) {
       // 創建新的音頻實例
-      audio = new Audio(soundEffect.file);
+      audio = new Audio();
+      
+      // 設置音頻源
+      audio.src = process.env.PUBLIC_URL + soundEffect.file;
 
       // 設置事件監聽器
       audio.addEventListener("canplaythrough", () => {
@@ -257,6 +261,10 @@ const CreditsPage = () => {
 
     // 嘗試播放音頻
     audio.currentTime = 0;
+    
+    // 確保音頻已經加載
+    audio.load();
+    
     const playPromise = audio.play();
 
     if (playPromise !== undefined) {
@@ -268,7 +276,7 @@ const CreditsPage = () => {
         .catch((err) => {
           console.error("播放失敗:", err);
           setLoading(false);
-          setError(`播放失敗: ${soundEffect.title}`);
+          setError(`播放失敗: ${err.message}`);
           setPlayingId(null);
         });
     }
@@ -278,7 +286,8 @@ const CreditsPage = () => {
   const toggleBgm = () => {
     if (!bgmRef.current) {
       // 第一次播放時創建音頻實例
-      bgmRef.current = new Audio("/sound/promo-action-beat_velvet-162609.mp3");
+      bgmRef.current = new Audio();
+      bgmRef.current.src = process.env.PUBLIC_URL + "/sound/promo-action-beat_velvet-162609.mp3";
       bgmRef.current.loop = true;
       bgmRef.current.volume = 0.7;
 
@@ -291,6 +300,7 @@ const CreditsPage = () => {
 
     if (!bgmPlaying) {
       // 播放背景音樂
+      bgmRef.current.load();
       const playPromise = bgmRef.current.play();
 
       if (playPromise !== undefined) {
@@ -301,7 +311,7 @@ const CreditsPage = () => {
           .catch((err) => {
             console.error("背景音樂播放失敗:", err);
             setBgmPlaying(false);
-            setError("背景音樂播放失敗，請再試一次");
+            setError("背景音樂播放失敗: " + err.message);
           });
       }
     } else {
@@ -568,24 +578,30 @@ const CreditsPage = () => {
           >
             Home
           </RouterLink>
-          <a
-            href="#sound-effects"
+          <Link
+            to="sound-effects"
+            smooth={true}
+            duration={800}
             className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
           >
             Sound Effects
-          </a>
-          <a
-            href="#background-music"
+          </Link>
+          <Link
+            to="background-music"
+            smooth={true}
+            duration={800}
             className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
           >
             Background Music
-          </a>
-          <a
-            href="#licenses"
+          </Link>
+          <Link
+            to="licenses"
+            smooth={true}
+            duration={800}
             className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
           >
             Licenses
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -910,7 +926,12 @@ const CreditsPage = () => {
 
         {/* 向下滾動指示器 - 更具音樂感 */}
         <div className="relative z-10 flex justify-center space-x-6 mt-4">
-          <a href="#sound-effects" className="scroll-indicator group">
+          <Link
+            to="sound-effects"
+            smooth={true}
+            duration={800}
+            className="scroll-indicator group cursor-pointer"
+          >
             <div className="flex flex-col items-center text-white">
               <span className="text-yellow-500/70 font-light text-sm mb-2 group-hover:text-yellow-400 transition-all">
                 Explore Sounds
@@ -927,7 +948,7 @@ const CreditsPage = () => {
                 </svg>
               </div>
             </div>
-          </a>
+          </Link>
         </div>
 
         {/* 音頻波形圖 - 底部 */}
