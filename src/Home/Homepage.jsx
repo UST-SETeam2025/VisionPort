@@ -98,9 +98,9 @@ const Newpage = () => {
     {
       id: 1,
       name: "Project Manager",
-      photo: `${process.env.PUBLIC_URL}/team/Edmond.jpg`,
+      photo: `${process.env.PUBLIC_URL}/Team/Edmond.jpg`,
       role: "LEUNG Kar Cheong",
-      email: "pm@stu.vtc.edu.hk",
+      email: "info@hktrpg.com",
       stats: {
         total: 85,
         body: 66,
@@ -119,7 +119,7 @@ const Newpage = () => {
     {
       id: 2,
       name: "3D Modeler",
-      photo: `${process.env.PUBLIC_URL}/team/Bella.jpg`,
+      photo: `${process.env.PUBLIC_URL}/Team/Bella.jpg`,
       role: "POON Ka Yi",
       email: "3d@stu.vtc.edu.hk",
       stats: {
@@ -140,7 +140,7 @@ const Newpage = () => {
     {
       id: 3,
       name: "Unity Developer",
-      photo: `${process.env.PUBLIC_URL}/team/Samuel.jpg`,
+      photo: `${process.env.PUBLIC_URL}/Team/Samuel.jpg`,
       role: "LI Chun Tat",
       email: "dev@stu.vtc.edu.hk",
       stats: {
@@ -161,7 +161,7 @@ const Newpage = () => {
     {
       id: 4,
       name: "VR Specialist",
-      photo: `${process.env.PUBLIC_URL}/team/Raymond.jpg`,
+      photo: `${process.env.PUBLIC_URL}/Team/Raymond.jpg`,
       role: "WONG Hoi Ming",
       email: "vr@stu.vtc.edu.hk",
       stats: {
@@ -665,7 +665,7 @@ const Newpage = () => {
                     <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
                       <iframe
                         className="w-full h-full object-cover rounded-lg shadow-lg ml-11"
-                        src="https://www.youtube.com/embed/bsyEZOsOYl4"
+                        src="https://www.youtube.com/embed/6lTKJSAmFM8"
                         title="Game Introduction Video"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -789,7 +789,7 @@ const Newpage = () => {
                     <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
                       <iframe
                         className="w-full h-full object-cover rounded-lg shadow-lg -ml-9"
-                        src="https://www.youtube.com/embed/bsyEZOsOYl4"
+                        src="https://www.youtube.com/embed/z43TE84aY9g"
                         title="Tutorial Video"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -910,7 +910,7 @@ const Newpage = () => {
                     <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
                       <iframe
                         className="w-full h-full object-cover rounded-lg shadow-lg ml-11"
-                        src="https://www.youtube.com/embed/KifRls_g2lM"
+                        src="https://www.youtube.com/embed/KGDmR7h7NQE"
                         title="Mission Video"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1616,7 +1616,7 @@ const Newpage = () => {
               <div className="flex flex-wrap justify-between items-center">
                 <div className="email-section flex items-center text-yellow-500 mb-2 md:mb-0">
                   <span className="mr-2 font-mono text-sm">TEAM EMAIL:</span>
-                  <span className="font-mono text-sm">team@stu.vtc.edu.hk</span>
+                  <span className="font-mono text-sm">visionproty@gmail.com</span>
                 </div>
 
                 {/* Team Overall Statistics */}
