@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link as RouterLink } from "react-router-dom";
 
 const PrivacyPolicy = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="text-white font-sans overflow-x-hidden min-h-screen bg-black">
       {/* Fixed Navigation */}

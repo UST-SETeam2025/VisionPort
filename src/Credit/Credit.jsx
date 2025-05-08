@@ -187,6 +187,10 @@ const CreditsPage = () => {
     };
   }, [audioInstances]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // 音效播放函數
   const toggleSound = (soundId) => {
     setError(null);
