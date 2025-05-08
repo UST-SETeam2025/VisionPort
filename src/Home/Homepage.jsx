@@ -98,7 +98,7 @@ const Newpage = () => {
     {
       id: 1,
       name: "Project Manager",
-      photo: `${process.env.PUBLIC_URL}/Team/Edmond.jpg`,
+      photo: `${process.env.PUBLIC_URL}/team/Edmond.jpg`,
       role: "LEUNG Kar Cheong",
       email: "info@hktrpg.com",
       stats: {
@@ -119,7 +119,7 @@ const Newpage = () => {
     {
       id: 2,
       name: "3D Modeler",
-      photo: `${process.env.PUBLIC_URL}/Team/Bella.jpg`,
+      photo: `${process.env.PUBLIC_URL}/team/Bella.jpg`,
       role: "POON Ka Yi",
       email: "3d@stu.vtc.edu.hk",
       stats: {
@@ -140,7 +140,7 @@ const Newpage = () => {
     {
       id: 3,
       name: "Unity Developer",
-      photo: `${process.env.PUBLIC_URL}/Team/Samuel.jpg`,
+      photo: `${process.env.PUBLIC_URL}/team/Samuel.jpg`,
       role: "LI Chun Tat",
       email: "dev@stu.vtc.edu.hk",
       stats: {
@@ -161,7 +161,7 @@ const Newpage = () => {
     {
       id: 4,
       name: "VR Specialist",
-      photo: `${process.env.PUBLIC_URL}/Team/Raymond.jpg`,
+      photo: `${process.env.PUBLIC_URL}/team/Raymond.jpg`,
       role: "WONG Hoi Ming",
       email: "vr@stu.vtc.edu.hk",
       stats: {
