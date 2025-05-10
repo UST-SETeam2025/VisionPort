@@ -1812,8 +1812,7 @@ const Newpage = () => {
                   Port Crane Simulator
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  © 2025 Hong Kong Port Simulation Training Center All Rights
-                  Reserved
+                  © 2025, LEUNG Kar Cheong, POON Ka Yi, LI Chun Tat, WONG Hoi Ming
                 </p>
               </div>
 
