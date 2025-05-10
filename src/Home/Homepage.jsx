@@ -1592,7 +1592,7 @@ const Newpage = () => {
                             </span>
                           </div>
                           <div className="text-gray-400 text-xs mt-1 text-center">
-                            AI <br /> Skill
+                            Technical <br /> Expertise
                           </div>
                         </div>
 
@@ -1615,7 +1615,7 @@ const Newpage = () => {
                             </span>
                           </div>
                           <div className="text-gray-400 text-xs mt-1 text-center">
-                            Google <br /> Search
+                            Problem <br /> Solving
                           </div>
                         </div>
 
@@ -1634,7 +1634,7 @@ const Newpage = () => {
                             </span>
                           </div>
                           <div className="text-gray-400 text-xs mt-1 text-center">
-                            Indian tutorials
+                            Experience
                           </div>
                         </div>
                       </div>
