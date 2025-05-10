@@ -293,7 +293,7 @@ const Newpage = () => {
   const overlayPosition = calculateOverlayPosition();
 
   return (
-    <div className="text-white font-sans overflow-x-hidden">
+    <div id="page-top" className="text-white font-sans overflow-x-hidden">
       {/* Game Loading Screen */}
       {loaderVisible && (
         <div className="fixed inset-0 bg-black z-[9999] flex items-center justify-center transition-opacity duration-1000">
@@ -343,7 +343,7 @@ const Newpage = () => {
       <nav className="fixed top-0 z-[10000] w-full bg-black bg-opacity-80 shadow-md backdrop-blur-sm border-b border-yellow-900/30">
         <div className="max-w-5xl mx-auto flex justify-center space-x-8 py-4">
           <Link
-            to="hero"
+            to="page-top"
             smooth={true}
             duration={800}
             className="text-yellow-500 hover:text-yellow-400 font-semibold transition cursor-pointer"
@@ -501,6 +501,78 @@ const Newpage = () => {
           </div>
         </header>
       </div>
+
+      {/* News Section */}
+      <section className="relative z-40 py-16 bg-black/80 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-yellow-500 mb-4">Latest News</h2>
+            <div className="w-24 h-1 bg-yellow-500 mx-auto"></div>
+          </div>
+
+          {/* App Store Link Card */}
+          <div className="bg-slate-900/60 border border-yellow-700/30 rounded-lg p-6 mb-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-500/10 rounded-full filter blur-3xl"></div>
+            <div className="relative z-10">
+              <h3 className="text-2xl font-bold text-yellow-400 mb-4">VisionPort Now Available on App Store!</h3>
+              <p className="text-gray-300 mb-6">Experience the future of port operations training with our state-of-the-art VR simulator. Download now and start your journey!</p>
+              <a 
+                href="https://apps.apple.com/us/app/vision-port/id6745158373"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 transform hover:scale-105"
+              >
+                <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+                Download on App Store
+              </a>
+            </div>
+          </div>
+
+          {/* Purchase Milestones */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Milestone 1 */}
+            <div className="bg-slate-900/60 border border-yellow-700/30 rounded-lg p-6 relative overflow-hidden group hover:border-yellow-500/50 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full filter blur-2xl group-hover:bg-yellow-500/10 transition-all duration-300"></div>
+              <div className="relative z-10">
+                <div className="text-4xl mb-4">🎉</div>
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">Goal: New Map</h3>
+                <p className="text-gray-300">Unlock at 5+ purchases</p>
+                <div className="mt-4 h-1 bg-yellow-500/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: '2%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Milestone 2 */}
+            <div className="bg-slate-900/60 border border-yellow-700/30 rounded-lg p-6 relative overflow-hidden group hover:border-yellow-500/50 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full filter blur-2xl group-hover:bg-yellow-500/10 transition-all duration-300"></div>
+              <div className="relative z-10">
+                <div className="text-4xl mb-4">🌦</div>
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">Goal: Weather Features</h3>
+                <p className="text-gray-300">Unlock at 10+ purchases</p>
+                <div className="mt-4 h-1 bg-yellow-500/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: '2%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Milestone 3 */}
+            <div className="bg-slate-900/60 border border-yellow-700/30 rounded-lg p-6 relative overflow-hidden group hover:border-yellow-500/50 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full filter blur-2xl group-hover:bg-yellow-500/10 transition-all duration-300"></div>
+              <div className="relative z-10">
+                <div className="text-4xl mb-4">🎯</div>
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">Goal: More Tasks</h3>
+                <p className="text-gray-300">Unlock at 50+ purchases</p>
+                <div className="mt-4 h-1 bg-yellow-500/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: '2%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Add custom text shadow classes */}
       <style>{`
