@@ -1,6 +1,20 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, lazy, Suspense } from "react";
 import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
+
+// 優化的圖片元件
+const OptimizedImage = ({ src, alt, className, sizes, style = {} }) => {
+  return (
+    <img
+      src={src}
+      alt={alt || ""}
+      className={className || ""}
+      style={{ willChange: 'transform', ...style }}
+      loading="lazy"
+      sizes={sizes || "(max-width: 600px) 500px, (max-width: 1200px) 800px, 1200px"}
+    />
+  );
+};
 
 const Newpage = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -20,11 +34,14 @@ const Newpage = () => {
   // 歷史部分所需的狀態
   const [selectedYear, setSelectedYear] = useState(1950);
 
-  // 計算年份索引
-  const yearIndex = [1950, 1970, 1990, 2010].indexOf(selectedYear);
+  // 計算年份索引 - 使用useMemo優化
+  const yearIndex = useMemo(() => 
+    [1950, 1970, 1990, 2010].indexOf(selectedYear),
+    [selectedYear]
+  );
 
-  // 年份導航函數
-  const navigateYear = (direction) => {
+  // 年份導航函數 - 使用useCallback優化
+  const navigateYear = useCallback((direction) => {
     const years = [1950, 1970, 1990, 2010];
     const currentIndex = years.indexOf(selectedYear);
 
@@ -33,10 +50,10 @@ const Newpage = () => {
     } else if (direction === "prev" && currentIndex > 0) {
       setSelectedYear(years[currentIndex - 1]);
     }
-  };
+  }, [selectedYear]);
 
-  // 歷史數據
-  const historyData = {
+  // 歷史數據 - 使用useMemo優化
+  const historyData = useMemo(() => ({
     1950: {
       image: `${process.env.PUBLIC_URL}/history/h4.png`,
       location: "Victoria Harbor",
@@ -77,7 +94,7 @@ const Newpage = () => {
       description:
         "Entering the 21st century, Hong Kong's port faced competition from ports in Shenzhen, Shanghai, and other cities, but still maintained a leading global position. Port operations became highly automated, with advanced technology improving efficiency. Hong Kong focused on developing high value-added shipping services to consolidate its position as an international shipping center.",
     },
-  };
+  }), []);
 
   // Create individual refs
   const introRef = useRef(null);
@@ -92,9 +109,9 @@ const Newpage = () => {
     mission: missionRef,
     free: freeRef,
   }), []);
-
-  // 團隊成員數據
-  const teamMembers = [
+  
+  // 團隊成員數據 - 使用useMemo優化
+  const teamMembers = useMemo(() => [
     {
       id: 1,
       name: "Project Manager",
@@ -179,10 +196,10 @@ const Newpage = () => {
       description:
         "Focuses on interactive design and optimization of virtual reality experiences. Ensures smooth and natural user operations in VR environments, providing immersive training experiences while reducing the risk of motion sickness.",
     },
-  ];
+  ], []);
 
-  // 定義 marqueItems 陣列
-  const marqueItems = [
+  // 定義 marqueItems 陣列 - 使用useMemo優化
+  const marqueItems = useMemo(() => [
     `${process.env.PUBLIC_URL}/carousel/h1.png`,
     `${process.env.PUBLIC_URL}/carousel/h2.png`,
     `${process.env.PUBLIC_URL}/carousel/h3.png`,
@@ -191,13 +208,14 @@ const Newpage = () => {
     `${process.env.PUBLIC_URL}/carousel/h6.png`,
     `${process.env.PUBLIC_URL}/carousel/h7.png`,
     `${process.env.PUBLIC_URL}/carousel/h8.png`,
-  ];
+  ], []);
 
   // 導航欄高度（用於調整遮罩位置）
   const navbarHeight = 54; // 根據你的導航欄高度調整，通常是16的倍數
 
   // 模擬加載器效果
   useEffect(() => {
+    // 使用 setTimeout 優化不必要的重新渲染
     const timer = setTimeout(() => {
       setLoaderVisible(false);
     }, 2500);
@@ -205,25 +223,46 @@ const Newpage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // 初始化窗口高度
+  // 初始化窗口高度 - 使用 ResizeObserver 來優化效能
   useEffect(() => {
     setWindowHeight(window.innerHeight);
 
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
+    // 使用 ResizeObserver 替代事件監聽，以減少事件觸發頻率
+    const resizeObserver = new ResizeObserver(entries => {
+      // 使用 requestAnimationFrame 限制更新頻率
+      window.requestAnimationFrame(() => {
+        setWindowHeight(window.innerHeight);
+      });
+    });
+    
+    // 觀察 document.body
+    resizeObserver.observe(document.body);
+    
+    return () => {
+      resizeObserver.disconnect();
     };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 跟踪滾動位置用於背景效果
+  // 跟踪滾動位置用於背景效果，使用 requestAnimationFrame 優化效能
   useEffect(() => {
+    let ticking = false; // 用於節流處理
+    let lastScrollY = 0;
+    
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      lastScrollY = window.scrollY;
+      
+      if (!ticking) {
+        // 使用 requestAnimationFrame 限制更新頻率
+        window.requestAnimationFrame(() => {
+          setScrollY(lastScrollY);
+          ticking = false;
+        });
+        
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true }); // 使用 passive 選項提升效能
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -231,66 +270,67 @@ const Newpage = () => {
   useEffect(() => {
     const options = {
       root: null,
-      rootMargin: "0px",
-      threshold: 0.2,
+      // 調整 rootMargin 使觀察器提前偵測到元素
+      rootMargin: "30% 0px", // 增加上方邊距，使元素在進入視窗前就開始準備
+      threshold: 0.1, // 降低閾值，使元素僅需顯示一小部分就觸發
     };
 
+    // 使用集中處理的 handleIntersect 函數，減少重複程式碼
     const handleIntersect = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id.replace("section", "");
-
+          let sectionKey = "";
+          
           switch (sectionId) {
-            case "1":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, intro: true }));
-              }, 500);
-              break;
-            case "2":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, tutorial: true }));
-              }, 500);
-              break;
-            case "3":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, mission: true }));
-              }, 500);
-              break;
-            case "4":
-              setTimeout(() => {
-                setActiveSections((prev) => ({ ...prev, free: true }));
-              }, 500);
-              break;
-            default:
-              break;
+            case "1": sectionKey = "intro"; break;
+            case "2": sectionKey = "tutorial"; break;
+            case "3": sectionKey = "mission"; break;
+            case "4": sectionKey = "free"; break;
+            default: return;
+          }
+          
+          // 移除延遲，立即顯示元素
+          if (sectionKey) {
+            setActiveSections(prev => ({ ...prev, [sectionKey]: true }));
           }
 
-          observer.unobserve(entry.target);
+          // 保持觀察，不要取消觀察，以便在元素重新進入視圖時再次觸發
+          // observer.unobserve(entry.target); -- 移除這一行
         }
       });
     };
 
     const observer = new IntersectionObserver(handleIntersect, options);
 
+    // 批量處理觀察對象
     Object.values(sectionRefs).forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
     return () => {
-      Object.values(sectionRefs).forEach((ref) => {
-        if (ref.current) observer.unobserve(ref.current);
-      });
+      observer.disconnect(); // 使用 disconnect 一次性清理，而非一個一個清理
     };
   }, [sectionRefs]);
 
-  // 計算漸變色罩的位置
-  const calculateOverlayPosition = () => {
+  // 預加載區段內容，確保一開始就準備好顯示
+  useEffect(() => {
+    // 頁面加載後立即預備首個區段
+    const timer = setTimeout(() => {
+      setActiveSections(prev => ({ ...prev, intro: true }));
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 計算漸變色罩的位置 - 使用 useMemo 來優化計算
+  const calculateOverlayPosition = useCallback(() => {
     if (!windowHeight) return 0;
     const progress = Math.min(1, Math.max(0, scrollY / (windowHeight * 1.2)));
     return progress * 100;
-  };
+  }, [scrollY, windowHeight]);
 
-  const overlayPosition = calculateOverlayPosition();
+  const overlayPosition = useMemo(() => calculateOverlayPosition(), [calculateOverlayPosition]);
 
   return (
     <div id="page-top" className="text-white font-sans overflow-x-hidden">
@@ -300,10 +340,12 @@ const Newpage = () => {
           <div className="loader-container relative w-[500px] h-[300px] flex flex-col items-center justify-center">
             {/* Main Title Animation */}
             <div className="mb-10 relative">
-              <h1 className="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 animate-pulse">
+              <h1 className="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 animate-pulse transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+              style={{ animationDuration: "2s", willChange: "opacity" }}>
                 VisionPort
               </h1>
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent animate-pulse"></div>
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent animate-pulse transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+              style={{ animationDuration: "2s", willChange: "opacity" }}></div>
             </div>
 
             {/* Decorative Elements */}
@@ -334,7 +376,8 @@ const Newpage = () => {
             </div>
 
             {/* Screen Noise Effect */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHNlZWQ9IjUwIi8+PGZlQmxlbmQgbW9kZT0ic2NyZWVuIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30 mix-blend-overlay animate-pulse"></div>
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHNlZWQ9IjUwIi8+PGZlQmxlbmQgbW9kZT0ic2NyZWVuIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30 mix-blend-overlay animate-pulse transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+            style={{ animationDuration: "3s" }}></div>
           </div>
         </div>
       )}
@@ -394,8 +437,8 @@ const Newpage = () => {
         {/* Marquee Background */}
         <div className="absolute inset-0 flex justify-between items-stretch opacity-50 pointer-events-none">
           <div
-            className="marqee-column animate-marqee-up"
-            style={{ animationDuration: "126s" }}
+            className="marqee-column animate-marqee-up transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+            style={{ animationDuration: "126s", willChange: "transform" }}
           >
             {marqueItems.map((item, index) => (
               <div
@@ -414,8 +457,8 @@ const Newpage = () => {
           </div>
 
           <div
-            className="marqee-column animate-marqee-down"
-            style={{ animationDuration: "110s" }}
+            className="marqee-column animate-marqee-down transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+            style={{ animationDuration: "110s", willChange: "transform" }}
           >
             {marqueItems.map((item, index) => (
               <div
@@ -434,8 +477,8 @@ const Newpage = () => {
           </div>
 
           <div
-            className="marqee-column animate-marqee-up"
-            style={{ animationDuration: "118s" }}
+            className="marqee-column animate-marqee-up transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+            style={{ animationDuration: "118s", willChange: "transform" }}
           >
             {marqueItems.map((item, index) => (
               <div
@@ -459,13 +502,16 @@ const Newpage = () => {
           id="hero"
           className="h-screen flex items-center justify-center bg-black pt-16" // 添加 pt-16 為導航欄留出空間
         >
-          {/* Background Video */}
+          {/* Background Video - 優化視頻加載 */}
           <video
-            className="w-full h-full object-cover rounded-lg shadow-lg"
+            className="w-full h-full object-cover rounded-lg shadow-lg transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
             src={`${process.env.PUBLIC_URL}/Terminal.mp4`}
             autoPlay
             loop
             muted
+            playsInline
+            preload="auto" // 預加載視頻
+            style={{ willChange: 'transform' }} // 優化視頻動畫效能
           ></video>
 
           {/* Overlay */}
@@ -640,23 +686,25 @@ const Newpage = () => {
           <div className="w-full flex items-center justify-center px-4">
             <div className="max-w-5xl w-full">
               <h2
-                className="left-0 text-3xl md:text-4xl font-bold text-yellow-500 mb-10 text-center transition-all duration-1000 ease-out relative"
+                className="left-0 text-3xl md:text-4xl font-bold text-yellow-500 mb-10 text-center transition-all duration-500 ease-out relative transform-gpu" 
                 style={{
                   opacity: activeSections.intro ? 1 : 0,
                   transform: activeSections.intro
                     ? "translateY(0)"
                     : "translateY(30px)",
-                  transitionDelay: "0.4s",
+                  transitionDelay: "0.2s",
+                  willChange: "transform, opacity",
                 }}
               >
                 <span className="relative inline-block">
                   <span
-                    className="absolute -bottom-2 left-0 w-full h-0.5 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-1000 ease-out"
+                    className="absolute -bottom-2 left-0 w-full h-0.5 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-500 ease-out"
                     style={{
                       transform: activeSections.intro
                         ? "scaleX(1)"
                         : "scaleX(0)",
-                      transitionDelay: "0.8s",
+                      transitionDelay: "0.4s",
+                      willChange: "transform",
                     }}
                   ></span>
                 </span>
@@ -665,35 +713,38 @@ const Newpage = () => {
               <div className="flex flex-col md:flex-row items-stretch">
                 {/* Left Text Section - 1/3 - Placed on Top Layer */}
                 <div
-                  className="w-full md:w-1/3 z-10 flex flex-col justify-center transition-all duration-2000 ease-out relative"
+                  className="w-full md:w-1/3 z-10 flex flex-col justify-center transition-all duration-800 ease-out relative transform-gpu"
                   style={{
                     opacity: activeSections.intro ? 1 : 0,
                     transform: activeSections.intro
                       ? "translateX(0)"
                       : "translateX(-300px)",
-                    transitionDelay: "0.7s",
+                    transitionDelay: "0.2s",
+                    willChange: "transform, opacity",
                   }}
                 >
                   {/* Title */}
                   <h2
-                    className="translate-x-10 text-3xl md:text-4xl font-bold text-yellow-500 mb-10 text-center transition-all duration-1000 ease-out relative -ml-18"
+                    className="translate-x-10 text-3xl md:text-4xl font-bold text-yellow-500 mb-10 text-center transition-all duration-500 ease-out relative -ml-18 transform-gpu"
                     style={{
                       opacity: activeSections.intro ? 1 : 0,
                       transform: activeSections.intro
                         ? "translateY(0)"
                         : "translateY(30px)",
-                      transitionDelay: "0.4s",
+                      transitionDelay: "0.3s",
+                      willChange: "transform, opacity",
                     }}
                   >
                     <span className="relative inline-block">
                       Game Introduction
                       <span
-                        className="absolute -bottom-2 left-0 w-full h-0.5 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-1000 ease-out"
+                        className="absolute -bottom-2 left-0 w-full h-0.5 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-500 ease-out"
                         style={{
                           transform: activeSections.intro
                             ? "scaleX(1)"
                             : "scaleX(0)",
-                          transitionDelay: "0.8s",
+                          transitionDelay: "0.4s",
+                          willChange: "transform",
                         }}
                       ></span>
                     </span>
@@ -701,10 +752,16 @@ const Newpage = () => {
 
                   {/* Using Background Image as Content Block Background */}
                   <div
-                    className="relative p-[38px_50px_36px_53px] w-[425px] h-[384px] bg-no-repeat bg-center bg-contain"
+                    className="relative p-[38px_50px_36px_53px] w-[425px] h-[384px] bg-no-repeat bg-center bg-contain transform-gpu"
                     style={{
                       backgroundImage:
                         "url('https://tw.hicdn.beanfun.com/beanfun/GamaWWW/CSO/official2021/assets/img/game-mode/mode/mode-content-wrapper-lg.png')",
+                      transform: activeSections.intro
+                        ? "translateX(0)" 
+                        : "translateX(-50px)",
+                      opacity: activeSections.intro ? 1 : 0,
+                      transition: "all 0.5s ease-out 0.4s",
+                      willChange: "transform, opacity",
                     }}
                   >
                     <h3 className="text-3xl font-normal text-white mb-[25px] max-w-[250px] leading-[42px]">
@@ -723,19 +780,26 @@ const Newpage = () => {
 
                 {/* Right Video Section - 2/3 */}
                 <div
-                  className="w-full md:w-2/3 mt-20 md:-ml-[30px] h-[383px] flex-grow overflow-hidden transition-all duration-2000 ease-out relative group cursor-pointer bg-gradient-to-br from-slate-950/30 to-slate-900/90"
+                  className="w-full md:w-2/3 mt-20 md:-ml-[30px] h-[383px] flex-grow overflow-hidden transition-all duration-800 ease-out relative group cursor-pointer bg-gradient-to-br from-slate-950/30 to-slate-900/90 transform-gpu"
                   style={{
                     opacity: activeSections.intro ? 1 : 0,
                     transform: activeSections.intro
                       ? "translateX(0)"
                       : "translateX(300px)",
-                    transitionDelay: "0.7s",
+                    transitionDelay: "0.3s",
+                    willChange: "transform, opacity",
                   }}
                 >
                   {/* Content Area */}
                   <div className="h-full w-full flex items-center justify-center">
-                    <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105">
-                      <div className="w-full h-full object-cover rounded-lg shadow-lg ml-11 bg-slate-900/80 p-8">
+                    <div className="w-4/5 h-4/5 transition-transform duration-[0.58s] ease group-hover:scale-105 transform-gpu"
+                    style={{
+                      willChange: "transform",
+                    }}>
+                      <div className="w-full h-full object-cover rounded-lg shadow-lg ml-11 bg-slate-900/80 p-8 transform-gpu"
+                      style={{
+                        willChange: "transform",
+                      }}>
                         <h3 className="text-2xl font-bold text-yellow-400 mb-4">Welcome to VisionPort</h3>
                         <p className="text-gray-300 text-lg leading-relaxed">
                           Experience the future of port operations training with our state-of-the-art VR simulator. 
@@ -1221,12 +1285,16 @@ const Newpage = () => {
 
               {/* History Content - Grid Layout */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Side - Image */}
+                {/* Left Side - Image - 優化成使用高效能的圖片元件 */}
                 <div className="relative border-2 border-yellow-700/30 rounded-lg overflow-hidden group">
-                  <img
+                  <OptimizedImage
                     src={historyData[selectedYear].image}
                     alt={`Hong Kong Port ${selectedYear}`}
                     className="w-full h-[300px] object-cover"
+                    style={{
+                      transform: 'translate3d(0,0,0)', // 強制啟用GPU加速
+                      willChange: 'transform', // 優化動畫效能
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
@@ -1256,9 +1324,11 @@ const Newpage = () => {
                   </div>
                   <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden mb-4">
                     <div
-                      className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full"
+                      className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
                       style={{
                         width: `${historyData[selectedYear].progress}%`,
+                        willChange: 'width', // 優化進度條動畫過渡
+                        transition: 'width 0.4s cubic-bezier(0.22, 1, 0.36, 1)', // 使用更流暢的緩動函數
                       }}
                     ></div>
                   </div>
@@ -1394,79 +1464,78 @@ const Newpage = () => {
                 <div className="carousel-container relative h-[500px] mx-auto">
                   {/* Team Member Data */}
                   {teamMembers.map((member, index) => (
-                    <div
-                      key={index}
-                      className="character-card absolute transition-all duration-500 w-[350px] cursor-pointer"
-                      style={{
-                        left: `calc(50% - 175px)`,
-                        transform: `translateX(${
-                          (index - selectedCharacter) * 150
-                        }px) scale(${index === selectedCharacter ? 1 : 0.85}) ${
-                          index === selectedCharacter
-                            ? "translateZ(50px)"
-                            : "translateZ(0)"
-                        }`,
-                        zIndex:
-                          index === selectedCharacter
-                            ? 10
-                            : 10 - Math.abs(index - selectedCharacter),
-                        opacity:
-                          Math.abs(index - selectedCharacter) > 2 ? 0 : 1,
-                        pointerEvents:
-                          Math.abs(index - selectedCharacter) > 2
-                            ? "none"
-                            : "auto",
-                      }}
-                      onClick={() => setSelectedCharacter(index)}
-                      draggable="true"
-                      onDragStart={(e) => {
-                        // Record starting position when drag starts
-                        dragStartX.current = e.clientX;
-                        e.dataTransfer.setDragImage(new Image(), 0, 0); // Hide default drag image
-                      }}
-                      onDrag={(e) => {
-                        if (e.clientX === 0) return; // Ignore invalid events
-                        const diff = e.clientX - dragStartX.current;
-                        if (Math.abs(diff) > 50) {
-                          // Drag exceeds threshold
-                          const direction = diff > 0 ? -1 : 1; // Left drag switches right, right drag switches left
-                          const newIndex = Math.max(
-                            0,
-                            Math.min(3, selectedCharacter + direction)
-                          );
-                          if (newIndex !== selectedCharacter) {
-                            setSelectedCharacter(newIndex);
-                            dragStartX.current = e.clientX;
+                    // 僅渲染可見範圍內的成員卡片，優化性能
+                    Math.abs(index - selectedCharacter) <= 2 && (
+                      <div
+                        key={index}
+                        className="character-card absolute transition-all duration-500 w-[350px] cursor-pointer transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+                        style={{
+                          '--translateX': `${(index - selectedCharacter) * 150}px`,
+                          '--scale': index === selectedCharacter ? '1' : '0.85',
+                          '--zIndex': index === selectedCharacter ? '10' : `${10 - Math.abs(index - selectedCharacter)}`,
+                          '--opacity': Math.abs(index - selectedCharacter) > 2 ? '0' : '1',
+                          left: `calc(50% - 175px)`,
+                          transform: `translateX(var(--translateX)) scale(var(--scale)) translateZ(${index === selectedCharacter ? '50px' : '0'})`,
+                          zIndex: `var(--zIndex)`,
+                          opacity: `var(--opacity)`,
+                          willChange: 'transform, opacity', // 優化動畫效能
+                          pointerEvents: Math.abs(index - selectedCharacter) > 2 ? "none" : "auto",
+                        }}
+                        onClick={() => setSelectedCharacter(index)}
+                        draggable="true"
+                        onDragStart={(e) => {
+                          // Record starting position when drag starts
+                          dragStartX.current = e.clientX;
+                          e.dataTransfer.setDragImage(new Image(), 0, 0); // Hide default drag image
+                        }}
+                        onDrag={(e) => {
+                          if (e.clientX === 0) return; // Ignore invalid events
+                          const diff = e.clientX - dragStartX.current;
+                          if (Math.abs(diff) > 50) {
+                            // Drag exceeds threshold
+                            const direction = diff > 0 ? -1 : 1; // Left drag switches right, right drag switches left
+                            const newIndex = Math.max(
+                              0,
+                              Math.min(3, selectedCharacter + direction)
+                            );
+                            if (newIndex !== selectedCharacter) {
+                              setSelectedCharacter(newIndex);
+                              dragStartX.current = e.clientX;
+                            }
                           }
-                        }
-                      }}
-                    >
-                      {/* Character Card Frame */}
-                      <div className="border-2 border-yellow-500/40 rounded-lg overflow-hidden bg-slate-900/80 shadow-lg shadow-yellow-500/20 transition-all duration-300">
-                        {/* Character Photo */}
-                        <div className="h-[320px] overflow-hidden">
-                          <div
-                            className="w-full h-full bg-center bg-cover transition-all duration-500"
-                            style={{ backgroundImage: `url(${member.photo})` }}
-                          ></div>
-                        </div>
-
-                        {/* Character Basic Info */}
-                        <div className="px-3 py-2 bg-gradient-to-b from-slate-900/90 to-black border-t border-yellow-800/40">
-                          <h3 className="text-xl font-bold text-yellow-400">
-                            {member.name}
-                          </h3>
-                          <div className="text-xs text-yellow-300/70 font-mono">
-                            {member.role}
+                        }}
+                      >
+                        {/* Character Card Frame */}
+                        <div className="border-2 border-yellow-500/40 rounded-lg overflow-hidden bg-slate-900/80 shadow-lg shadow-yellow-500/20 transition-all duration-300">
+                          {/* Character Photo */}
+                          <div className="h-[320px] overflow-hidden">
+                            <OptimizedImage
+                              src={member.photo}
+                              alt={member.name}
+                              className="w-full h-full bg-center bg-cover transition-all duration-500 transform-gpu" // 使用 OptimizedImage 和 transform-gpu
+                              style={{
+                                willChange: 'transform', // 優化動畫效能
+                              }}
+                            />
                           </div>
-                        </div>
 
-                        {/* Selection Indicator - Only Shown on Active Card */}
-                        {index === selectedCharacter && (
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-yellow-500"></div>
-                        )}
+                          {/* Character Basic Info */}
+                          <div className="px-3 py-2 bg-gradient-to-b from-slate-900/90 to-black border-t border-yellow-800/40">
+                            <h3 className="text-xl font-bold text-yellow-400">
+                              {member.name}
+                            </h3>
+                            <div className="text-xs text-yellow-300/70 font-mono">
+                              {member.role}
+                            </div>
+                          </div>
+
+                          {/* Selection Indicator - Only Shown on Active Card */}
+                          {index === selectedCharacter && (
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-yellow-500"></div>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )
                   ))}
 
                   {/* Left-Right Arrow Controls */}
@@ -1680,9 +1749,14 @@ const Newpage = () => {
                       {/* Contact Button */}
                       <a 
                         href={`mailto:${teamMembers[selectedCharacter].email}`}
-                        className="contact-button relative block"
+                        className="contact-button relative block transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
                       >
-                        <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all duration-300 hover:bg-gradient-to-r hover:from-yellow-800/80 hover:to-yellow-600/80 transform hover:scale-105">
+                        {/* 添加發光效果層，分離動畫複雜度 */}
+                        <div className="button-glow animate-rotate"></div>
+                        <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+                        style={{
+                          willChange: 'transform', // 優化動畫效能
+                        }}>
                           <span className="text-lg font-bold tracking-wider">
                             CONTACT
                           </span>
@@ -1770,9 +1844,14 @@ const Newpage = () => {
                   {/* Contact Button */}
                   <a 
                     href={`mailto:${teamMembers[selectedCharacter].email}`}
-                    className="contact-button relative block"
+                    className="contact-button relative block transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
                   >
-                    <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all duration-300 hover:bg-gradient-to-r hover:from-yellow-800/80 hover:to-yellow-600/80 transform hover:scale-105">
+                    {/* 添加發光效果層，分離動畫複雜度 */}
+                    <div className="button-glow animate-rotate"></div>
+                    <div className="bg-gradient-to-r from-yellow-900/80 to-yellow-700/80 text-white px-6 py-2 rounded border border-yellow-500/50 shadow-lg shadow-yellow-500/20 transform-gpu" // 使用 transform-gpu 啟用 GPU 加速
+                    style={{
+                      willChange: 'transform', // 優化動畫效能
+                    }}>
                       <span className="text-lg font-bold tracking-wider">
                         CONTACT
                       </span>
@@ -1861,12 +1940,19 @@ const Newpage = () => {
 
       {/* Add CSS Animations */}
       <style>{`
+        /* 定義 CSS 變數供動畫使用 */
+        :root {
+          --animate-duration: 120s;
+          --animate-duration-slow: 130s;
+          --marquee-width: 100%;
+        }
+
         @keyframes marqee-animation {
           0% {
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0); /* 使用 translate3d 啟用 GPU 加速 */
           }
           100% {
-            transform: translateY(-100%);
+            transform: translate3d(0, -100%, 0); /* 使用 translate3d 啟用 GPU 加速 */
           }
         }
 
@@ -1898,21 +1984,29 @@ const Newpage = () => {
         }
 
         .animate-marqee-up {
-          animation: marqee-animation 120s linear infinite;
+          animation: marqee-animation var(--animate-duration) linear infinite;
+          will-change: transform; /* 提示瀏覽器此元素將進行變換 */
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
         }
 
         .animate-marqee-down {
-          animation: marqee-animation 130s linear infinite reverse;
+          animation: marqee-animation var(--animate-duration-slow) linear infinite reverse;
+          will-change: transform; /* 提示瀏覽器此元素將進行變換 */
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
         }
 
         .animate-breath {
           animation: breath 3s infinite;
+          will-change: opacity; /* 提示瀏覽器此元素將改變不透明度 */
         }
 
         .marqee-column {
           display: flex;
           flex-direction: column;
           height: 100vh;
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
+          backface-visibility: hidden; /* 防止 3D 變換時出現閃爍 */
+          perspective: 1000px; /* 提供 3D 透視效果 */
         }
 
         .font-cs {
@@ -1921,7 +2015,7 @@ const Newpage = () => {
 
         /* Marquee New CSS */
         .marquee-container {
-          width: 100%;
+          width: var(--marquee-width);
           overflow: hidden;
           position: relative;
           height: 220px;
@@ -1933,6 +2027,8 @@ const Newpage = () => {
           animation: marquee-slide 40s linear infinite;
           /* Ensure content is long enough, at least twice the width of the container to ensure no gaps during scrolling */
           width: max-content;
+          will-change: transform; /* 提示瀏覽器此元素將進行變換 */
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
         }
 
         .marquee-content:hover {
@@ -1943,24 +2039,35 @@ const Newpage = () => {
           position: relative;
           flex-shrink: 0;
           margin: 0 8px;
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
         }
 
         @keyframes marquee-slide {
           0% {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0); /* 使用 translate3d 啟用 GPU 加速 */
           }
           100% {
             /* This value should be negative half the width of the container content to ensure seamless looping */
-            transform: translateX(calc(-100% / 2));
+            transform: translate3d(calc(-100% / 2), 0, 0); /* 使用 translate3d 啟用 GPU 加速 */
           }
         }
 
         .character-carousel {
           perspective: 1000px;
+          transform-style: preserve-3d;
         }
 
         .carousel-container {
           transform-style: preserve-3d;
+          will-change: transform; /* 提示瀏覽器此元素將進行變換 */
+        }
+
+        /* 優化角色卡片的動畫效能 */
+        .character-card {
+          backface-visibility: hidden;
+          transform-style: preserve-3d;
+          will-change: transform, opacity; /* 提示瀏覽器此元素將進行變換和不透明度的改變 */
+          transition: transform 0.5s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.5s ease-out;
         }
 
         @keyframes pulse {
@@ -1984,25 +2091,33 @@ const Newpage = () => {
           border-radius: 8px;
         }
 
-        .contact-button::before {
-          content: "";
+        /* 優化聯絡按鈕的動畫效能 */
+        .contact-button {
+          position: relative;
+          transform: translate3d(0, 0, 0); /* 強制啟用 GPU 加速 */
+          transition: transform 0.3s ease;
+        }
+        
+        .contact-button:hover {
+          transform: scale(1.05) translate3d(0, 0, 0); /* 直接在 hover 時改變變換，而非使用 ::before */
+        }
+
+        /* 替代原先的 ::before 旋轉動畫，以減少 GPU 負擔 */
+        .contact-button .button-glow {
           position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(45deg, #eab308, transparent, #eab308);
+          inset: -2px;
           border-radius: 0.5rem;
-          z-index: -1;
+          background: linear-gradient(45deg, #eab308, transparent, #eab308);
           opacity: 0;
+          z-index: -1;
           transition: opacity 0.3s ease;
         }
 
-        .contact-button:hover::before {
+        .contact-button:hover .button-glow {
           opacity: 1;
-          animation: rotate 2s linear infinite;
         }
 
+        /* 將旋轉動畫從 ::before 中分離出來，單獨給一個元素使用，減少複合動畫 */
         @keyframes rotate {
           0% {
             transform: rotate(0deg);
@@ -2010,6 +2125,21 @@ const Newpage = () => {
           100% {
             transform: rotate(360deg);
           }
+        }
+        
+        .animate-rotate {
+          animation: rotate 2s linear infinite;
+          will-change: transform; /* 提示瀏覽器此元素將進行變換 */
+        }
+
+        /* 優化圖片懶加載過渡效果 */
+        img.lazy-load {
+          opacity: 0;
+          transition: opacity 0.3s ease-in;
+        }
+        
+        img.lazy-load.loaded {
+          opacity: 1;
         }
       `}</style>
     </div>
