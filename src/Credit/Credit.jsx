@@ -1369,7 +1369,7 @@ const CreditsPage = () => {
                       >
                         <path
                           fillRule="evenodd"
-                          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 102 0v-1a1 1 0 01-1-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
                           clipRule="evenodd"
                         />
                       </svg>
@@ -1402,6 +1402,31 @@ const CreditsPage = () => {
               <h3 className="text-xl font-semibold text-yellow-400 mb-4">
                 Attribution Requirements
               </h3>
+
+              <div className="bg-slate-800/50 p-6 rounded-lg mb-8">
+                <div className="flex items-center mb-4">
+                  <img 
+                    src="https://sci.vtc.edu.hk/img/common/header/logo.png" 
+                    alt="Smart City Innovation Centre Logo" 
+                    className="h-12 mr-4"
+                  />
+                  <h4 className="text-lg font-semibold text-yellow-400">Smart City Innovation Centre</h4>
+                </div>
+                <p className="text-gray-300 mb-3">
+                  Special thanks to the Smart City Innovation Centre for providing Unity technology support and the crane 3D model used in this simulation.
+                </p>
+                <a
+                  href="https://sci.vtc.edu.hk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 inline-flex items-center"
+                >
+                  Visit SCI Website
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
 
               <ul className="list-disc pl-6 mb-8 text-gray-300 space-y-2">
                 <li>
